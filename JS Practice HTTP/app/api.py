@@ -49,6 +49,11 @@ async def get_weather(
             status_code=204,
             detail="No Content"
         )
+    elif response.status_code == 206:
+        raise HTTPException(
+            status_code=206,
+            detail="Partial Content"
+        )
     elif response.status_code == 400:
         raise HTTPException(
             status_code=400,
@@ -69,6 +74,46 @@ async def get_weather(
             status_code=404,
             detail="City not found"
         )
+    elif response.status_code == 406:
+        raise HTTPException(
+            status_code=406,
+            detail="Not Acceptable"
+        )
+    elif response.status_code == 407:
+        raise HTTPException(
+            status_code=407,
+            detail="Proxy Authentication Required"
+        )
+    elif response.status_code == 409:
+        raise HTTPException(
+            status_code=409,
+            detail="Conflict"
+        )
+    elif response.status_code == 410:
+        raise HTTPException(
+            status_code=410,
+            detail="Gone"
+        )
+    elif response.status_code == 412:
+        raise HTTPException(
+            status_code=412,
+            detail="Precondition Failed"
+        )
+    elif response.status_code == 416:
+        raise HTTPException(
+            status_code=416,
+            detail="Range Not Satisfiable"
+        )
+    elif response.status_code == 418:
+        raise HTTPException(
+            status_code=418,
+            detail="I'm a teapot"
+        )
+    elif response.status_code == 425:
+        raise HTTPException(
+            status_code=425,
+            detail="Too Early"
+        )
     elif response.status_code == 429:
         raise HTTPException(
             status_code=429,
@@ -78,6 +123,11 @@ async def get_weather(
         raise HTTPException(
             status_code=500,
             detail="Internal Server Error"
+        )
+    elif response.status_code == 501:
+        raise HTTPException(
+            status_code=501,
+            detail="Not Implemented"
         )
     elif response.status_code == 502:
         raise HTTPException(
