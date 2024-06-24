@@ -3,3 +3,4 @@ Pillow
 albumentations
 numpy
 albumentations
+matplotlib
