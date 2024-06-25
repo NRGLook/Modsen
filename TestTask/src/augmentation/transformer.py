@@ -1,49 +1,123 @@
 import random
-from typing import Tuple, List
 import numpy as np
-from PIL import Image, ImageEnhance, ImageFilter, ImageOps, ImageDraw
+
+from typing import Tuple
+
+from PIL import Image, ImageEnhance, ImageDraw, ImageChops
 
 from TestTask.src.utils.error_handler import handle_image_error
 
 
 @handle_image_error
-def resize_image(image: Image.Image, size: Tuple[int, int] = (256, 256)) -> Image.Image:
-    """ Изменяет размер изображения. """
-    return image.resize(size, Image.ANTIALIAS)
+def resize_image(
+        image: Image.Image,
+        size: Tuple[int, int] = (256, 256)
+) -> Image.Image:
+    """
+    Resizes the image to the given size.
+
+    Args:
+        image (Image.Image): The original image.
+        size (Tuple[int, int]): The new size of the image (width, height).
+
+    Returns:
+        Image.Image: The resized image.
+    """
+    return image.resize(size, Image.Resampling.LANCZOS)
 
 
 @handle_image_error
-def rotate_image(image: Image.Image, degrees: int = 90) -> Image.Image:
-    """ Поворачивает изображение на заданное количество градусов. """
-    return image.rotate(degrees)
+def rotate_image(
+        image: Image.Image,
+        degrees: int = 90
+) -> Image.Image:
+    """
+    Rotates the image by a given number of degrees.
+
+    Args:
+        image (Image.Image): The original image.
+        degrees (int): The number of degrees to rotate the image.
+
+    Returns:
+        Image.Image: The rotated image.
+    """
+    return image.rotate(degrees, expand=True)
 
 
 @handle_image_error
-def flip_image(image: Image.Image, mode: str = 'horizontal') -> Image.Image:
-    """ Отражает изображение по горизонтали или вертикали. """
+def flip_image(
+        image: Image.Image,
+        mode: str = 'horizontal'
+) -> Image.Image:
+    """
+    Flips the image horizontally or vertically.
+
+    Args:
+        image (Image.Image): The original image.
+        mode (str): The mode of flipping ('horizontal' or 'vertical').
+
+    Returns:
+        Image.Image: The flipped image.
+    """
     if mode == 'horizontal':
-        return image.transpose(Image.FLIP_LEFT_RIGHT)
+        return image.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
     else:
-        return image.transpose(Image.FLIP_TOP_BOTTOM)
+        return image.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
 
 
 @handle_image_error
-def change_brightness(image: Image.Image, factor: float = 1.5) -> Image.Image:
-    """ Изменяет яркость изображения. """
+def change_brightness(
+        image: Image.Image,
+        factor: float = 1.5
+) -> Image.Image:
+    """
+    Changes the brightness of the image.
+
+    Args:
+        image (Image.Image): The original image.
+        factor (float): The factor by which to change the brightness.
+
+    Returns:
+        Image.Image: The image with changed brightness.
+    """
     enhancer = ImageEnhance.Brightness(image)
     return enhancer.enhance(factor)
 
 
 @handle_image_error
-def change_contrast(image: Image.Image, factor: float = 1.5) -> Image.Image:
-    """ Изменяет контраст изображения. """
+def change_contrast(
+        image: Image.Image,
+        factor: float = 1.5
+) -> Image.Image:
+    """
+    Changes the contrast of the image.
+
+    Args:
+        image (Image.Image): The original image.
+        factor (float): The factor by which to change the contrast.
+
+    Returns:
+        Image.Image: The image with changed contrast.
+    """
     enhancer = ImageEnhance.Contrast(image)
     return enhancer.enhance(factor)
 
 
 @handle_image_error
-def add_noise(image: Image.Image, amount: float = 0.02) -> Image.Image:
-    """ Добавляет случайный шум к изображению. """
+def add_noise(
+        image: Image.Image,
+        amount: float = 0.02
+) -> Image.Image:
+    """
+    Adds random noise to the image.
+
+    Args:
+        image (Image.Image): The original image.
+        amount (float): The amount of noise to add.
+
+    Returns:
+        Image.Image: The image with added noise.
+    """
     np_image = np.array(image)
     noise = np.random.normal(0, 255 * amount, np_image.shape)
     noisy_image = np.clip(np_image + noise, 0, 255).astype(np.uint8)
@@ -51,14 +125,38 @@ def add_noise(image: Image.Image, amount: float = 0.02) -> Image.Image:
 
 
 @handle_image_error
-def shift_image(image: Image.Image, shift: Tuple[int, int] = (10, 10)) -> Image.Image:
-    """ Сдвигает изображение. """
-    return ImageOps.offset(image, *shift)
+def shift_image(
+        image: Image.Image,
+        shift: Tuple[int, int] = (10, 10)
+) -> Image.Image:
+    """
+    Shifts the image by a given amount.
+
+    Args:
+        image (Image.Image): The original image.
+        shift (Tuple[int, int]): The amount to shift the image (x, y).
+
+    Returns:
+        Image.Image: The shifted image.
+    """
+    return ImageChops.offset(image, shift[0], shift[1])
 
 
 @handle_image_error
-def random_crop(image: Image.Image, size: Tuple[int, int] = (100, 100)) -> Image.Image:
-    """ Выполняет случайную обрезку изображения. """
+def random_crop(
+        image: Image.Image,
+        size: Tuple[int, int] = (100, 100)
+) -> Image.Image:
+    """
+    Performs a random crop on the image.
+
+    Args:
+        image (Image.Image): The original image.
+        size (Tuple[int, int]): The size of the crop (width, height).
+
+    Returns:
+        Image.Image: The cropped image.
+    """
     width, height = image.size
     left = random.randint(0, width - size[0])
     top = random.randint(0, height - size[1])
@@ -66,16 +164,59 @@ def random_crop(image: Image.Image, size: Tuple[int, int] = (100, 100)) -> Image
 
 
 @handle_image_error
-def overlay_text(image: Image.Image, text: str = "Sample Text", position: Tuple[int, int] = (50, 50), color: Tuple[int, int, int] = (255, 255, 255)) -> Image.Image:
-    """ Наложение текста на изображение. """
+def overlay_text(
+        image: Image.Image,
+        text: str = "Sample Text",
+        position: Tuple[int, int] = (50, 50),
+        color: Tuple[int, int, int] = (255, 255, 255)
+) -> Image.Image:
+    """
+    Overlays text on the image.
+
+    Args:
+        image (Image.Image): The original image.
+        text (str): The text to overlay.
+        position (Tuple[int, int]): The position to place the text.
+        color (Tuple[int, int, int]): The color of the text.
+
+    Returns:
+        Image.Image: The image with overlaid text.
+    """
     draw = ImageDraw.Draw(image)
     draw.text(position, text, fill=color)
     return image
 
 
 @handle_image_error
-def overlay_image(main_image: Image.Image, overlay: Image.Image, position: Tuple[int, int] = (0, 0), transparency: float = 0.5) -> Image.Image:
-    """ Наложение другого изображения с заданной прозрачностью. """
+def overlay_image(
+        main_image: Image.Image,
+        overlay: Image.Image,
+        position: Tuple[int, int] = (0, 0),
+        transparency: float = 0.5
+) -> Image.Image:
+    """
+    Overlays another image with the given transparency.
+
+    Args:
+        main_image (Image.Image): The original image.
+        overlay (Image.Image): The overlay image.
+        position (Tuple[int, int]): The position to place the overlay image.
+        transparency (float): The transparency level of the overlay image.
+
+    Returns:
+        Image.Image: The image with overlaid image.
+    """
     overlay = overlay.resize(main_image.size)
-    mask = Image.new("L", main_image.size, int(255 * transparency))
-    return Image.composite(main_image, overlay, mask)
+    overlay_with_transparency = overlay.copy()
+    overlay_with_transparency.putalpha(int(255 * transparency))
+
+    # Create a blank image with an alpha channel (RGBA)
+    combined = Image.new("RGBA", main_image.size)
+    combined.paste(main_image, (0, 0))
+    combined.paste(
+        overlay_with_transparency,
+        position,
+        overlay_with_transparency
+    )
+
+    return combined.convert("RGB")

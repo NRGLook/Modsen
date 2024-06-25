@@ -1,5 +1,6 @@
 import os
 from typing import List, Tuple, Optional
+
 from PIL import Image
 
 from TestTask.src.utils.error_handler import handle_image_error

@@ -1,7 +1,10 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox, simpledialog, Menu, Toplevel, \
-    Label, Entry, Button, Canvas
-from PIL import Image, ImageTk
+from tkinter import (filedialog, messagebox,
+                     Menu, Toplevel,
+                     Label, Entry, Button)
+
+from PIL import ImageTk
+
 from TestTask.src.augmentation.loader import load_images_from_directory
 from TestTask.src.augmentation.transformer import *
 from TestTask.src.augmentation.saver import save_image
@@ -77,8 +80,8 @@ class ImageAugmentationApp:
             "Overlay Image": overlay_image
         }
         for name, func in transformations.items():
-            self.transform_menu.add_command(label=name, command=lambda
-                f=func: self.apply_transformation(f))
+            self.transform_menu.add_command(label=name, command=lambda f=func:
+            self.apply_transformation(f))
 
     def load_images(self):
         self.directory = filedialog.askdirectory()
@@ -156,13 +159,16 @@ class ImageAugmentationApp:
         if save_dir:
             for i, img in enumerate(self.transformed_images):
                 save_image(img, save_dir, f"transformed_{i}.jpg")
-            messagebox.showinfo("Save Images",
-                                "All transformed images have been saved.")
+            messagebox.showinfo(
+                "Save Images",
+                "All transformed images have been saved."
+            )
 
+    @staticmethod
     def display_image(self, image, canvas):
         if image:
             canvas.image = ImageTk.PhotoImage(
-                image.resize((300, 300), Image.LANCZOS))
+                image.resize((300, 300), Image.Resampling.LANCZOS))
             canvas.create_image(0, 0, anchor=tk.NW, image=canvas.image)
 
     def show_previous_image(self):

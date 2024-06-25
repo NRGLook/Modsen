@@ -1,6 +1,5 @@
-opencv-python
-Pillow
-albumentations
-numpy
-albumentations
-matplotlib
+opencv-python==4.10.0.84
+Pillow==10.3.0
+albumentations== 1.4.10
+numpy==1.26.4
+matplotlib==3.9.0
