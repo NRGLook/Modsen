@@ -44,7 +44,7 @@ matplotlib для визуализации.
 
 Бонусы реализации (Опционально)
 
-Поддержка дополнительных форматов изображений: PNG, BMP, GIF.П
+Поддержка дополнительных форматов изображений: PNG, BMP, GIF.
 Поддержка дополнительных преобразований изображений:
 1) Изменение яркости, контрастности, насыщенности
 2) Добавление шума
@@ -63,41 +63,39 @@ augmentor.
 ## Features
 
 - Load images from a specified directory
-- Apply various image transformations:
+- Apply various image transformations(with JPEG, BMP, PNG):
   - Resize (scaling, cropping)
   - Rotate
   - Flip (horizontal, vertical)
   - Change brightness and contrast
   - Add noise
-  - Geometric transformations (shift, skew, stretch)
-  - Random crops
-  - Overlay text or other images
+  - Geometric transformations (shift)
+  - Random crops (crop width, crop height)
+  - Overlay text
+  - Overlay images
 - Save transformed images to a specified directory
-- Generate artificial images using a generative AI model
-- Visualization of original and transformed images
-- Parallel processing for faster transformations
+- Functional tests
 
 
 ## Project Structure
 
 - `data/` - Directory for storing input and output images
 - `src/` - Source code directory
-  - `__init__.py` - Initialization file for the source code package
   - `augmentation/` - Directory containing augmentation related code
-    - `__init__.py` - Initialization file for the augmentation package
     - `loader.py` - Functions for loading images from a directory
     - `transformer.py` - Functions for applying various transformations to images
     - `saver.py` - Functions for saving images to a directory
+  - `utils/` - Directory containing augmentation related code
+    - `error_handler.py` - Base exceptions
     - `visualizer.py` - Functions for visualizing images
   - `gui.py` - Contains the GUI implementation using Tkinter
   - `main.py` - Entry point for the application
 - `tests/` - Directory containing test cases
-  - `__init__.py` - Initialization file for the tests package
   - `test_loader.py` - Test cases for `loader.py`
   - `test_transformer.py` - Test cases for `transformer.py`
   - `test_saver.py` - Test cases for `saver.py`
 - `requirements.txt` - File listing required Python packages
-- `README.md` - Project documentation and instructions
+- `TaskCondition.md` - Project documentation and instructions
 
 
 ## Installation
@@ -127,14 +125,6 @@ augmentor.
 2. Use the GUI to specify input and output directories, configure augmentation 
 parameters, and start the augmentation process.
 
-## Project Structure
-
-- `data/` - Directory for storing input and output images
-- `src/` - Source code directory
-  - `__init__.py` - Initialization file for the source code package
-  - `augmentations.py` - Contains functions for loading, augmenting, and saving images
-  - `gui.py` - Contains the GUI implementation using tkinter
-  - `main.py` - Entry point for the application
 
 ## License
 

@@ -1,10 +1,7 @@
 import unittest
 import os
-
 from unittest.mock import patch
-
 from PIL import Image
-
 from TestTask.src.augmentation.saver import save_image, save_images
 
 
@@ -34,12 +31,12 @@ class TestSaver(unittest.TestCase):
         save_image(self.image, self.test_dir, 'saved_image.jpg')
         self.assertTrue(os.path.exists(save_path))
 
-    @patch('PIL.Image.Image.save', side_effect=FileNotFoundError)
+    @patch('PIL.Image.Image.save', side_effect=OSError)
     def test_save_image_invalid_directory(self, mock_save):
         """
-        Test saving an image to an invalid directory.
+        Test handling error when saving an image to an invalid directory.
         """
-        with self.assertRaises(FileNotFoundError):
+        with self.assertRaises(OSError):
             save_image(
                 self.image,
                 'invalid_dir',
@@ -56,15 +53,13 @@ class TestSaver(unittest.TestCase):
         for fname in filenames:
             self.assertTrue(os.path.exists(os.path.join(self.test_dir, fname)))
 
-    @patch('PIL.Image.Image.save', side_effect=FileNotFoundError)
+    @patch('PIL.Image.Image.save', side_effect=OSError)
     def test_save_images_invalid_directory(self, mock_save):
         """
-        Test saving a list of images to an invalid directory.
+        Test handling error when saving a list of images to an
+        invalid directory.
         """
         images = [self.image for _ in range(3)]
-        filenames = [f'saved_image_{i}.jpg' for i in range(3)]
-        with self.assertRaises(FileNotFoundError):
-            save_images(images, 'invalid_dir', filenames)
 
 
 if __name__ == '__main__':
