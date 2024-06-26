@@ -2,7 +2,10 @@ import os
 from typing import List, Optional
 from PIL import Image
 
+from TestTask.src.utils.error_handler import handle_image_error
 
+
+@handle_image_error
 def save_image(
         image: Image.Image,
         directory: str,
@@ -25,28 +28,45 @@ def save_image(
         quality (Optional[int]):
             The quality for saving the image (used only for JPEG format).
     """
+    if image is None:
+        raise ValueError("Cannot save a None image.")
+
     if not os.path.exists(directory):
-        os.makedirs(directory)
+        try:
+            os.makedirs(directory)
+        except PermissionError as e:
+            raise PermissionError(f"Permission denied: {e}")
 
     if format_image is None:
         format_image = filename.split('.')[-1].upper()
 
-    if format_image == 'JPG':
+    # Convert JPG to JPEG
+    if format_image.upper() == 'JPG':
         format_image = 'JPEG'
+
+    # Convert images with mode 'P' or 'RGBA' to 'RGB'
+    if format_image.upper() in ['JPEG', 'JPG'] and image.mode in ['P', 'RGBA']:
+        image = image.convert('RGB')
 
     save_params = {
         'format': format_image
     }
 
-    if format_image.upper() == 'JPEG':
+    if format_image.upper() in ['JPEG', 'JPG']:
         save_params['quality'] = quality
 
-    image.save(
-        os.path.join(directory, filename),
-        **save_params
-    )
+    try:
+        image.save(
+            os.path.join(directory, filename),
+            **save_params
+        )
+    except KeyError:
+        raise ValueError(f"Unsupported format: {format_image}")
+    except PermissionError as e:
+        raise PermissionError(f"Permission denied: {e}")
 
 
+@handle_image_error
 def save_images(
         images: List[Image.Image],
         directory: str,
@@ -70,23 +90,40 @@ def save_images(
             The quality for saving the images (used only for JPEG format).
     """
     if not os.path.exists(directory):
-        os.makedirs(directory)
+        try:
+            os.makedirs(directory)
+        except PermissionError as e:
+            raise PermissionError(f"Permission denied: {e}")
 
     for img, fname in zip(images, filenames):
-        format_img = format_image if format_image else fname.split('.')[
-            -1].upper()
+        if img is None:
+            raise ValueError("Cannot save a None image.")
 
-        if format_img == 'JPG':
-            format_img = 'JPEG'
+        if format_image is None:
+            format_image = fname.split('.')[-1].upper()
+
+        # Convert JPG to JPEG
+        if format_image.upper() == 'JPG':
+            format_image = 'JPEG'
+
+        # Convert images with mode 'P' or 'RGBA' to 'RGB'
+        if format_image.upper() in ['JPEG', 'JPG'] and img.mode in ['P',
+                                                                    'RGBA']:
+            img = img.convert('RGB')
 
         save_params = {
-            'format': format_img
+            'format': format_image
         }
 
-        if save_params['format'] == 'JPEG':
+        if save_params['format'] in ['JPEG', 'JPG']:
             save_params['quality'] = quality
 
-        img.save(
-            os.path.join(directory, fname),
-            **save_params
-        )
+        try:
+            img.save(
+                os.path.join(directory, fname),
+                **save_params
+            )
+        except KeyError:
+            raise ValueError(f"Unsupported format: {format_image}")
+        except PermissionError as e:
+            raise PermissionError(f"Permission denied: {e}")

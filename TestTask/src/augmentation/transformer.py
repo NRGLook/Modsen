@@ -3,7 +3,7 @@ import numpy as np
 
 from typing import Tuple
 
-from PIL import Image, ImageEnhance, ImageDraw, ImageChops
+from PIL import Image, ImageEnhance, ImageDraw, ImageChops, ImageFont
 
 from TestTask.src.utils.error_handler import handle_image_error
 
@@ -158,9 +158,16 @@ def random_crop(
         Image.Image: The cropped image.
     """
     width, height = image.size
-    left = random.randint(0, width - size[0])
-    top = random.randint(0, height - size[1])
-    return image.crop((left, top, left + size[0], top + size[1]))
+    crop_width, crop_height = size
+
+    if crop_width > width or crop_height > height:
+        raise ValueError(
+            "Crop size must be smaller than the original image size"
+        )
+
+    left = random.randint(0, width - crop_width)
+    top = random.randint(0, height - crop_height)
+    return image.crop((left, top, left + crop_width, top + crop_height))
 
 
 @handle_image_error
@@ -168,7 +175,7 @@ def overlay_text(
         image: Image.Image,
         text: str = "Sample Text",
         position: Tuple[int, int] = (50, 50),
-        color: Tuple[int, int, int] = (255, 255, 255)
+        color: Tuple[int, int, int, int] = (255, 255, 255, 255)
 ) -> Image.Image:
     """
     Overlays text on the image.
@@ -177,14 +184,20 @@ def overlay_text(
         image (Image.Image): The original image.
         text (str): The text to overlay.
         position (Tuple[int, int]): The position to place the text.
-        color (Tuple[int, int, int]): The color of the text.
+        color (Tuple[int, int, int, int]): The color of the text,
+        including alpha.
 
     Returns:
         Image.Image: The image with overlaid text.
     """
-    draw = ImageDraw.Draw(image)
-    draw.text(position, text, fill=color)
-    return image
+    try:
+        draw = ImageDraw.Draw(image)
+        font = ImageFont.load_default()
+        draw.text(position, text, fill=color, font=font)
+        return image
+    except Exception as e:
+        print(f"Error overlaying text: {e}")
+        return None
 
 
 @handle_image_error
