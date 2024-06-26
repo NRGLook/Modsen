@@ -3,7 +3,7 @@ from tkinter import (
     filedialog, messagebox, Menu,
     Toplevel, Label, Entry, Button
 )
-from PIL import ImageTk, Image
+from PIL import Image
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from TestTask.src.augmentation.loader import load_images_from_directory
@@ -110,7 +110,10 @@ class ImageAugmentationApp:
             self.images = load_images_from_directory(self.directory)
             self.current_image_index = 0
             if self.images:
-                self.display_images(self.images[self.current_image_index], None)
+                self.display_images(
+                    self.images[self.current_image_index],
+                    None
+                )
             messagebox.showinfo("Load Images",
                                 f"Loaded {len(self.images)} images.")
 
@@ -170,7 +173,8 @@ class ImageAugmentationApp:
             if self.transformed_images:
                 self.display_images(
                     self.images[self.current_image_index],
-                    self.transformed_images[self.current_image_index])
+                    self.transformed_images[self.current_image_index]
+                )
 
             messagebox.showinfo(
                 "Transformation",
@@ -201,7 +205,8 @@ class ImageAugmentationApp:
 
     def display_images(self, original_image, transformed_image):
         """
-        Display the original and transformed images using matplotlib on the Tkinter canvas.
+        Display the original and transformed images using matplotlib on the
+        Tkinter canvas.
 
         Args:
             original_image (Image): The original image to display.
@@ -240,7 +245,8 @@ class ImageAugmentationApp:
         if self.current_image_index > 0:
             self.current_image_index -= 1
             original = self.images[self.current_image_index]
-            transformed = self.transformed_images[self.current_image_index] if self.transformed_images else None
+            transformed = self.transformed_images[self.current_image_index] \
+                if self.transformed_images else None
             self.display_images(original, transformed)
 
     def show_next_image(self):
@@ -250,7 +256,8 @@ class ImageAugmentationApp:
         if self.current_image_index < len(self.images) - 1:
             self.current_image_index += 1
             original = self.images[self.current_image_index]
-            transformed = self.transformed_images[self.current_image_index] if self.transformed_images else None
+            transformed = self.transformed_images[self.current_image_index] \
+                if self.transformed_images else None
             self.display_images(original, transformed)
 
 
