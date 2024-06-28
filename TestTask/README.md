@@ -1,69 +1,61 @@
 # Image Augmentation Tool
 
-This project is a GUI tool for augmenting images using various transformations. 
-The tool is built with Python and uses libraries such as OpenCV, Pillow, 
-and albumentations for image processing and augmentation.
+This project is a GUI tool for augmenting images using various transformations. The tool is built with Python and uses libraries such as OpenCV, Pillow, and albumentations for image processing and augmentation.
 
-## Full condition
+## Full Condition
 
-Техническое задание по аугментации изображений
+### Image Augmentation Technical Specification
 
-Введение
+#### Introduction
 
-Цель этого задания - написать программу, которая сможет выполнять аугментацию
-изображений, используемых для задач машинного обучения, например, классификации
-изображений. Программа должна уметь применять различные преобразования к 
-изображениям для увеличения размера обучающего набора данных и улучшения 
-обобщающей способности моделей. Программа должна быть реализована на языке 
-Python и предоставлять широкий спектр преобразований с возможностью настройки 
-параметров.
+The goal of this task is to write a program capable of performing image augmentation, which is used in machine learning tasks such as image classification. The program should be able to apply various transformations to images to increase the size of the training dataset and improve the generalization ability of models. The program must be implemented in Python and provide a wide range of transformations with adjustable parameters.
 
-Требования
+#### Requirements
 
-1. Загрузка данных:
-Программа должна поддерживать загрузку изображений из указанных
-директорий.
-Поддерживаемые формат изображений: JPEG.
-2. Преобразования изображений:
-Программа должна реализовывать следующие базовые преобразования:
-Изменение размера (масштабирование, обрезка)
-Повороты и отражения
-3. Вывод результатов:
-Программа должна создавать заданное число преобразованных
-изображений и сохранять их в указанную директорию.
-Пользователь должен иметь возможность настраивать параметры
-преобразований.
+1. **Data Loading:**
+   - The program must support loading images from specified directories.
+   - Supported image formats: JPEG, PNG, BMP, GIF.
 
-Среда разработки
+2. **Image Transformations:**
+   - The program must implement the following basic transformations:
+     - Resize (scaling, cropping)
+     - Rotations and reflections
 
-1. Язык программирования: Python 3.x
-2. Рекомендуемые библиотеки и инструменты:
-numpy, pandas для работы с данными.
-opencv, PIL для обработки изображений.
-matplotlib для визуализации.
+3. **Output Results:**
+   - The program must create a specified number of transformed images and save them to the specified directory.
+   - Users must be able to customize the parameters of the transformations.
 
-Бонусы реализации (Опционально)
+#### Development Environment
 
-Поддержка дополнительных форматов изображений: PNG, BMP, GIF.
-Поддержка дополнительных преобразований изображений:
-1) Изменение яркости, контрастности, насыщенности
-2) Добавление шума
-3) Геометрические преобразования (сдвиг, наклон, растяжение)
-4) Случайные вырезки (random crops)
-5) Наложение текста или других изображений
-6) Создание искусственных изображений помощью генеративного ИИ
-7) Обработка ошибок для случаев некорректных или поврежденных изображений.
-8) Визуализация преобразований.
-9) Поддержка параллельной обработки для ускорения процесса.
-10) Функциональные тесты.
-11) Изучение библиотек для аугментации изображений albumentations, imgaug,
-augmentor.
+1. **Programming Language:**
+   - Python 3.x
 
+2. **Recommended Libraries and Tools:**
+   - numpy, pandas for data manipulation.
+   - opencv, PIL for image processing.
+   - matplotlib for visualization.
+
+#### Optional Enhancements
+
+Support for additional image formats: PNG, BMP, GIF.
+
+Support for additional image transformations:
+1. Brightness, contrast, saturation adjustment
+2. Adding noise
+3. Geometric transformations (shifting, tilting, stretching)
+4. Random crops
+5. Overlaying text or other images
+6. Generating artificial images using generative AI
+7. Error handling for incorrect or corrupted images
+8. Visualization of transformations
+9. Support for parallel processing to speed up the process
+10. Functional tests
+11. Exploration of image augmentation libraries: albumentations, imgaug, augmentor
 
 ## Features
 
 - Load images from a specified directory
-- Apply various image transformations(with JPEG, BMP, PNG):
+- Apply various image transformations (with JPEG, BMP, PNG):
   - Resize (scaling, cropping)
   - Rotate
   - Flip (horizontal, vertical)
@@ -76,17 +68,16 @@ augmentor.
 - Save transformed images to a specified directory
 - Functional tests
 
-
 ## Project Structure
 
 - `data/` - Directory for storing input and output images
 - `src/` - Source code directory
-  - `augmentation/` - Directory containing augmentation related code
+  - `augmentation/` - Directory containing augmentation-related code
     - `loader.py` - Functions for loading images from a directory
     - `transformer.py` - Functions for applying various transformations to images
     - `saver.py` - Functions for saving images to a directory
-  - `utils/` - Directory containing augmentation related code
-    - `error_handler.py` - Base exceptions
+  - `utils/` - Directory containing utility code
+    - `error_handler.py` - Functions for handling and logging errors
     - `visualizer.py` - Functions for visualizing images
   - `gui.py` - Contains the GUI implementation using Tkinter
   - `main.py` - Entry point for the application
@@ -96,7 +87,6 @@ augmentor.
   - `test_saver.py` - Test cases for `saver.py`
 - `requirements.txt` - File listing required Python packages
 - `TaskCondition.md` - Project documentation and instructions
-
 
 ## Installation
 
@@ -122,8 +112,16 @@ augmentor.
     python TestTask/src/main.py
     ```
 
-2. Use the GUI to specify input and output directories, configure augmentation 
-parameters, and start the augmentation process.
+2. Use the GUI to specify input and output directories, configure augmentation parameters, and start the augmentation process.
+
+
+## To-Do
+
+- [ ] Implement multithreading for processing a large number of images.
+- [ ] Implement saving of transformation settings for reuse.
+- [ ] Add advanced functionality for image augmentation from libraries such as albumentations, imgaug, and augmentor. Compare the performance of these libraries with each other.
+- [ ] Create artificial images using generative AI.
+- [ ] Support parallel processing to speed up the process.
 
 
 ## License

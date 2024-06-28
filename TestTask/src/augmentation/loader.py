@@ -15,15 +15,25 @@ def load_images_from_directory(
     Loads images from the specified directory, supporting only the specified
     formats.
 
-    Args:
+    Parameters:
         directory (str):
             The path to the directory containing images.
         supported_formats (Optional[Tuple[str, ...]]):
-            A tuple of supported image formats. Defaults to JPEG, JPG, PNG,
-            BMP, GIF.
+            A tuple of supported image formats. Defaults to
+            ('.jpeg', '.jpg', '.png', '.bmp', '.gif').
 
     Returns:
-        List[Image.Image]: A list of PIL.Image objects.
+        List[Image.Image]:
+            A list of PIL.Image objects representing the loaded images.
+
+    Raises:
+        IOError:
+            If there is an error loading an image.
+
+    Example:
+    >>> images = load_images_from_directory('path/to/images')
+    >>> for img in images:
+    >>>     img.show()
     """
     if supported_formats is None:
         supported_formats = ('.jpeg', '.jpg', '.png', '.bmp', '.gif')

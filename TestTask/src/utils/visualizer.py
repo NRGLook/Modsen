@@ -1,8 +1,7 @@
+import matplotlib.pyplot as plt
 from typing import List
 
 from PIL import Image
-
-import matplotlib.pyplot as plt
 
 
 def show_image(
@@ -12,9 +11,15 @@ def show_image(
     """
     Displays a single image with a title.
 
-    Args:
-        image (Image.Image): The image to display.
-        title (str): The title of the image.
+    Parameters:
+        image (Image.Image):
+            The image to display.
+        title (str):
+            The title of the image. Default is "Image".
+
+    Example:
+    >>> img = Image.open('example.jpg')
+    >>> show_image(img, title='Example Image')
     """
     plt.figure(figsize=(6, 6))
     plt.imshow(image)
@@ -31,10 +36,23 @@ def show_images(
     """
     Displays a list of images with titles.
 
-    Args:
-        images (List[Image.Image]): The list of images to display.
-        titles (List[str]): The list of titles for each image.
-        cols (int): The number of images per row.
+    Parameters:
+        images (List[Image.Image]):
+            The list of images to display.
+        titles (List[str]):
+            The list of titles for each image. Default is None, which assigns
+            an empty title to each image.
+        cols (int):
+            The number of images per row. Default is 3.
+
+    Raises:
+        AssertionError:
+            If the number of images and titles do not match.
+
+    Example:
+    >>> imgs = [Image.open(f'image_{i}.jpg') for i in range(6)]
+    >>> titles = [f'Image {i}' for i in range(6)]
+    >>> show_images(imgs, titles, cols=2)
     """
     if titles is None:
         titles = [""] * len(images)

@@ -3,9 +3,12 @@ from tkinter import (
     filedialog, messagebox, Menu,
     Toplevel, Label, Entry, Button
 )
-from PIL import Image
+
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+from PIL import Image
+
 from TestTask.src.augmentation.loader import load_images_from_directory
 from TestTask.src.augmentation.transformer import (
     overlay_image, overlay_text,

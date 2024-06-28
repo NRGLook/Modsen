@@ -1,6 +1,5 @@
 import random
 import numpy as np
-
 from typing import Tuple
 
 from PIL import Image, ImageEnhance, ImageDraw, ImageChops, ImageFont
@@ -16,12 +15,21 @@ def resize_image(
     """
     Resizes the image to the given size.
 
-    Args:
-        image (Image.Image): The original image.
-        size (Tuple[int, int]): The new size of the image (width, height).
+    Parameters:
+    image (Image.Image): The original image.
+    size (Tuple[int, int]): The new size of the image (width, height).
 
     Returns:
-        Image.Image: The resized image.
+    Image.Image: The resized image.
+
+    Raises:
+    ValueError: If the provided size is not a tuple of two integers.
+
+    Example:
+    >>> img = Image.open('example.jpg')
+    >>> resized_img = resize_image(img, (100, 100))
+    >>> resized_img.size
+    (100, 100)
     """
     return image.resize(size, Image.Resampling.LANCZOS)
 
@@ -34,12 +42,17 @@ def rotate_image(
     """
     Rotates the image by a given number of degrees.
 
-    Args:
-        image (Image.Image): The original image.
-        degrees (int): The number of degrees to rotate the image.
+    Parameters:
+    image (Image.Image): The original image.
+    degrees (int): The number of degrees to rotate the image.
 
     Returns:
-        Image.Image: The rotated image.
+    Image.Image: The rotated image.
+
+    Example:
+    >>> img = Image.open('example.jpg')
+    >>> rotated_img = rotate_image(img, 45)
+    >>> rotated_img.show()
     """
     return image.rotate(degrees, expand=True)
 
@@ -52,17 +65,27 @@ def flip_image(
     """
     Flips the image horizontally or vertically.
 
-    Args:
-        image (Image.Image): The original image.
-        mode (str): The mode of flipping ('horizontal' or 'vertical').
+    Parameters:
+    image (Image.Image): The original image.
+    mode (str): The mode of flipping ('horizontal' or 'vertical').
 
     Returns:
-        Image.Image: The flipped image.
+    Image.Image: The flipped image.
+
+    Raises:
+    ValueError: If the mode is not 'horizontal' or 'vertical'.
+
+    Example:
+    >>> img = Image.open('example.jpg')
+    >>> flipped_img = flip_image(img, 'vertical')
+    >>> flipped_img.show()
     """
     if mode == 'horizontal':
         return image.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
-    else:
+    elif mode == 'vertical':
         return image.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
+    else:
+        raise ValueError("Mode should be 'horizontal' or 'vertical'")
 
 
 @handle_image_error
@@ -73,12 +96,17 @@ def change_brightness(
     """
     Changes the brightness of the image.
 
-    Args:
-        image (Image.Image): The original image.
-        factor (float): The factor by which to change the brightness.
+    Parameters:
+    image (Image.Image): The original image.
+    factor (float): The factor by which to change the brightness.
 
     Returns:
-        Image.Image: The image with changed brightness.
+    Image.Image: The image with changed brightness.
+
+    Example:
+    >>> img = Image.open('example.jpg')
+    >>> bright_img = change_brightness(img, 1.2)
+    >>> bright_img.show()
     """
     enhancer = ImageEnhance.Brightness(image)
     return enhancer.enhance(factor)
@@ -92,12 +120,17 @@ def change_contrast(
     """
     Changes the contrast of the image.
 
-    Args:
-        image (Image.Image): The original image.
-        factor (float): The factor by which to change the contrast.
+    Parameters:
+    image (Image.Image): The original image.
+    factor (float): The factor by which to change the contrast.
 
     Returns:
-        Image.Image: The image with changed contrast.
+    Image.Image: The image with changed contrast.
+
+    Example:
+    >>> img = Image.open('example.jpg')
+    >>> contrast_img = change_contrast(img, 1.8)
+    >>> contrast_img.show()
     """
     enhancer = ImageEnhance.Contrast(image)
     return enhancer.enhance(factor)
@@ -111,12 +144,17 @@ def add_noise(
     """
     Adds random noise to the image.
 
-    Args:
-        image (Image.Image): The original image.
-        amount (float): The amount of noise to add.
+    Parameters:
+    image (Image.Image): The original image.
+    amount (float): The amount of noise to add.
 
     Returns:
-        Image.Image: The image with added noise.
+    Image.Image: The image with added noise.
+
+    Example:
+    >>> img = Image.open('example.jpg')
+    >>> noisy_img = add_noise(img, 0.05)
+    >>> noisy_img.show()
     """
     np_image = np.array(image)
     noise = np.random.normal(0, 255 * amount, np_image.shape)
@@ -132,12 +170,17 @@ def shift_image(
     """
     Shifts the image by a given amount.
 
-    Args:
-        image (Image.Image): The original image.
-        shift (Tuple[int, int]): The amount to shift the image (x, y).
+    Parameters:
+    image (Image.Image): The original image.
+    shift (Tuple[int, int]): The amount to shift the image (x, y).
 
     Returns:
-        Image.Image: The shifted image.
+    Image.Image: The shifted image.
+
+    Example:
+    >>> img = Image.open('example.jpg')
+    >>> shifted_img = shift_image(img, (20, 30))
+    >>> shifted_img.show()
     """
     return ImageChops.offset(image, shift[0], shift[1])
 
@@ -150,20 +193,26 @@ def random_crop(
     """
     Performs a random crop on the image.
 
-    Args:
-        image (Image.Image): The original image.
-        size (Tuple[int, int]): The size of the crop (width, height).
+    Parameters:
+    image (Image.Image): The original image.
+    size (Tuple[int, int]): The size of the crop (width, height).
 
     Returns:
-        Image.Image: The cropped image.
+    Image.Image: The cropped image.
+
+    Raises:
+    ValueError: If the crop size is larger than the original image size.
+
+    Example:
+    >>> img = Image.open('example.jpg')
+    >>> cropped_img = random_crop(img, (50, 50))
+    >>> cropped_img.show()
     """
     width, height = image.size
     crop_width, crop_height = size
 
     if crop_width > width or crop_height > height:
-        raise ValueError(
-            "Crop size must be smaller than the original image size"
-        )
+        raise ValueError("Crop size must be smaller than the original image size")
 
     left = random.randint(0, width - crop_width)
     top = random.randint(0, height - crop_height)
@@ -180,15 +229,19 @@ def overlay_text(
     """
     Overlays text on the image.
 
-    Args:
-        image (Image.Image): The original image.
-        text (str): The text to overlay.
-        position (Tuple[int, int]): The position to place the text.
-        color (Tuple[int, int, int, int]): The color of the text,
-        including alpha.
+    Parameters:
+    image (Image.Image): The original image.
+    text (str): The text to overlay.
+    position (Tuple[int, int]): The position to place the text.
+    color (Tuple[int, int, int, int]): The color of the text, including alpha.
 
     Returns:
-        Image.Image: The image with overlaid text.
+    Image.Image: The image with overlaid text.
+
+    Example:
+    >>> img = Image.open('example.jpg')
+    >>> text_img = overlay_text(img, "Hello", (100, 100), (255, 0, 0, 255))
+    >>> text_img.show()
     """
     try:
         draw = ImageDraw.Draw(image)
@@ -210,14 +263,20 @@ def overlay_image(
     """
     Overlays another image with the given transparency.
 
-    Args:
-        main_image (Image.Image): The original image.
-        overlay (Image.Image): The overlay image.
-        position (Tuple[int, int]): The position to place the overlay image.
-        transparency (float): The transparency level of the overlay image.
+    Parameters:
+    main_image (Image.Image): The original image.
+    overlay (Image.Image): The overlay image.
+    position (Tuple[int, int]): The position to place the overlay image.
+    transparency (float): The transparency level of the overlay image.
 
     Returns:
-        Image.Image: The image with overlaid image.
+    Image.Image: The image with overlaid image.
+
+    Example:
+    >>> main_img = Image.open('main.jpg')
+    >>> overlay_img = Image.open('overlay.png')
+    >>> combined_img = overlay_image(main_img, overlay_img, (50, 50), 0.7)
+    >>> combined_img.show()
     """
     overlay = overlay.resize(main_image.size)
     overlay_with_transparency = overlay.copy()

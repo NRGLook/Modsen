@@ -1,13 +1,17 @@
 import logging
-from typing import Any
+from typing import Callable
 
 
 def setup_logging(log_file: str = 'errors.log') -> None:
     """
-    Настраивает логгирование для записи ошибок в файл.
+    Configures logging to write errors to a specified log file.
 
-    Args:
-    log_file (str): Путь к файлу лога.
+    Parameters:
+        log_file (str):
+            The path to the log file. Default is 'errors.log'.
+
+    Example:
+    >>> setup_logging('my_errors.log')
     """
     logging.basicConfig(filename=log_file, level=logging.ERROR,
                         format='%(asctime)s:%(levelname)s:%(message)s')
@@ -15,24 +19,41 @@ def setup_logging(log_file: str = 'errors.log') -> None:
 
 def log_error(error: Exception, msg: str = "Error occurred") -> None:
     """
-    Записывает ошибку в лог-файл с указанным сообщением.
+    Logs an error to the log file with a specified message.
 
-    Args:
-    error (Exception): Перехваченное исключение.
-    msg (str): Сообщение для логирования вместе с информацией об ошибке.
+    Parameters:
+        error (Exception):
+            The caught exception.
+        msg (str):
+            The message to log along with the error information.
+            Default is "Error occurred".
+
+    Example:
+    >>> try:
+    >>>     1 / 0
+    >>> except Exception as e:
+    >>>     log_error(e, "Division by zero")
     """
     logging.error(f"{msg}: {str(error)}")
 
 
-def handle_image_error(func: Any) -> Any:
+def handle_image_error(func: Callable) -> Callable:
     """
-    Декоратор для обработки исключений при работе с изображениями. Логирует ошибку и продолжает выполнение.
+    Decorator for handling exceptions when working with images.
+    Logs the error and continues execution.
 
-    Args:
-    func (Callable): Функция, которая может вызвать исключение.
+    Parameters:
+        func (Callable):
+            The function that might raise an exception.
 
     Returns:
-    Callable: Функция с обработкой ошибок.
+        Callable:
+            The function with error handling.
+
+    Example:
+    >>> @handle_image_error
+    >>> def process_image(image):
+    >>>     pass
     """
     def wrapper(*args, **kwargs):
         try:
