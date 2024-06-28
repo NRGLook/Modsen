@@ -1,10 +1,12 @@
 import tkinter as tk
+import matplotlib.pyplot as plt
+import json
+
 from tkinter import (
     filedialog, messagebox, Menu,
     Toplevel, Label, Entry, Button
 )
 
-import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from PIL import Image
@@ -56,6 +58,16 @@ class ImageAugmentationApp:
                                      command=self.save_images)
         self.save_button.pack(pady=10)
 
+        # Create button for saving settings
+        self.save_settings_button = tk.Button(master, text="Save Settings",
+                                              command=self.save_settings)
+        self.save_settings_button.pack(pady=10)
+
+        # Create button for loading settings
+        self.load_settings_button = tk.Button(master, text="Load Settings",
+                                              command=self.load_settings)
+        self.load_settings_button.pack(pady=10)
+
         # Frame for visualization of loaded and augmented images
         self.canvas_frame = tk.Frame(master)
         self.canvas_frame.pack(fill=tk.BOTH, expand=True)
@@ -72,6 +84,7 @@ class ImageAugmentationApp:
         self.images = []
         self.transformed_images = []
         self.current_image_index = 0
+        self.params = {}
 
     def show_transform_menu(self):
         """
@@ -82,6 +95,7 @@ class ImageAugmentationApp:
         params = param_dialog.params
 
         if params:
+            self.params = params
             self.apply_transformations(params)
 
     def add_transformation_menu_options(self):
@@ -262,6 +276,38 @@ class ImageAugmentationApp:
             transformed = self.transformed_images[self.current_image_index] \
                 if self.transformed_images else None
             self.display_images(original, transformed)
+
+    def save_settings(self):
+        """
+        Save the current transformation settings to a JSON file.
+        """
+        if not self.params:
+            messagebox.showerror("Error", "No transformation settings to save.")
+            return
+
+        save_path = filedialog.asksaveasfilename(defaultextension=".json",
+                                                 filetypes=[("JSON files", "*.json")])
+        if save_path:
+            try:
+                with open(save_path, 'w') as f:
+                    json.dump(self.params, f)
+                messagebox.showinfo("Save Settings", "Settings have been saved.")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to save settings: {e}")
+
+    def load_settings(self):
+        """
+        Load transformation settings from a JSON file.
+        """
+        load_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
+        if load_path:
+            try:
+                with open(load_path, 'r') as f:
+                    self.params = json.load(f)
+                self.apply_transformations(self.params)
+                messagebox.showinfo("Load Settings", "Settings have been loaded and applied.")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to load settings: {e}")
 
 
 class ParamDialog:
