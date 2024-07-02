@@ -1,6 +1,7 @@
 import tkinter as tk
 import matplotlib.pyplot as plt
 import json
+import concurrent.futures
 
 from tkinter import (
     filedialog, messagebox, Menu,
@@ -144,48 +145,16 @@ class ImageAugmentationApp:
         if not self.images:
             messagebox.showerror("Error", "No images loaded.")
             return
+
         try:
-            self.transformed_images = self.images.copy()
-            if 'degrees' in params:
-                self.transformed_images = [
-                    rotate_image(img, degrees=params['degrees']) for img in
-                    self.transformed_images]
-            if 'mode' in params:
-                self.transformed_images = [flip_image(img, mode=params['mode'])
-                                           for img in self.transformed_images]
-            if 'size' in params:
-                self.transformed_images = [
-                    resize_image(img, size=params['size']) for img in
-                    self.transformed_images]
-            if 'factor_brightness' in params:
-                self.transformed_images = [
-                    change_brightness(img, factor=params['factor_brightness'])
-                    for img in self.transformed_images]
-            if 'factor_contrast' in params:
-                self.transformed_images = [
-                    change_contrast(img, factor=params['factor_contrast']) for
-                    img in self.transformed_images]
-            if 'amount' in params:
-                self.transformed_images = [
-                    add_noise(img, amount=params['amount']) for img in
-                    self.transformed_images]
-            if 'shift' in params:
-                self.transformed_images = [
-                    shift_image(img, shift=params['shift']) for img in
-                    self.transformed_images]
-            if 'crop_size' in params:
-                self.transformed_images = [
-                    random_crop(img, size=params['crop_size']) for img in
-                    self.transformed_images]
-            if 'text' in params:
-                self.transformed_images = [
-                    overlay_text(img, text=params['text']) for img in
-                    self.transformed_images]
-            if 'overlay_img' in params:
-                self.transformed_images = [
-                    overlay_image(img, overlay=params['overlay_img'],
-                                  transparency=params.get('transparency', 0.5))
-                    for img in self.transformed_images]
+            self.transformed_images = []
+
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                futures = [
+                    executor.submit(self.apply_transformation_to_image, img,
+                                    params) for img in self.images]
+                for future in concurrent.futures.as_completed(futures):
+                    self.transformed_images.append(future.result())
 
             if self.transformed_images:
                 self.display_images(
@@ -193,37 +162,78 @@ class ImageAugmentationApp:
                     self.transformed_images[self.current_image_index]
                 )
 
-            messagebox.showinfo(
-                "Transformation",
-                "Applied transformations successfully."
-            )
+            messagebox.showinfo("Transformation",
+                                "Applied transformations successfully.")
         except Exception as e:
             messagebox.showerror("Error", str(e))
+
+    def apply_transformation_to_image(self, image, params):
+        """
+        Apply the selected transformations to a single image.
+
+        Args:
+            image (Image): The image to transform.
+            params (dict): Dictionary of transformation parameters.
+
+        Returns:
+            Image: The transformed image.
+        """
+        transformed_image = image.copy()
+        if 'degrees' in params:
+            transformed_image = rotate_image(transformed_image,
+                                             degrees=params['degrees'])
+        if 'mode' in params:
+            transformed_image = flip_image(transformed_image,
+                                           mode=params['mode'])
+        if 'size' in params:
+            transformed_image = resize_image(transformed_image,
+                                             size=params['size'])
+        if 'factor_brightness' in params:
+            transformed_image = change_brightness(transformed_image,
+                                                  factor=params[
+                                                      'factor_brightness'])
+        if 'factor_contrast' in params:
+            transformed_image = change_contrast(transformed_image,
+                                                factor=params[
+                                                    'factor_contrast'])
+        if 'amount' in params:
+            transformed_image = add_noise(transformed_image,
+                                          amount=params['amount'])
+        if 'shift' in params:
+            transformed_image = shift_image(transformed_image,
+                                            shift=params['shift'])
+        if 'crop_size' in params:
+            transformed_image = random_crop(transformed_image,
+                                            size=params['crop_size'])
+        if 'text' in params:
+            transformed_image = overlay_text(transformed_image,
+                                             text=params['text'])
+        if 'overlay_img' in params:
+            transformed_image = overlay_image(transformed_image,
+                                              overlay=params['overlay_img'],
+                                              transparency=params.get(
+                                                  'transparency', 0.5))
+
+        return transformed_image
 
     def save_images(self):
         """
         Save the transformed images to the specified directory.
         """
         if not self.transformed_images:
-            messagebox.showerror(
-                "Error",
-                "No transformed images to save."
-            )
+            messagebox.showerror("Error", "No transformed images to save.")
             return
         save_dir = filedialog.askdirectory()
         if save_dir:
             for i, img in enumerate(self.transformed_images):
                 if img is not None:
                     save_image(img, save_dir, f"transformed_{i}.jpg")
-            messagebox.showinfo(
-                "Save Images",
-                "All transformed images have been saved."
-            )
+            messagebox.showinfo("Save Images",
+                                "All transformed images have been saved.")
 
     def display_images(self, original_image, transformed_image):
         """
-        Display the original and transformed images using matplotlib on the
-        Tkinter canvas.
+        Display the original and transformed images using matplotlib on the Tkinter canvas.
 
         Args:
             original_image (Image): The original image to display.
@@ -262,8 +272,8 @@ class ImageAugmentationApp:
         if self.current_image_index > 0:
             self.current_image_index -= 1
             original = self.images[self.current_image_index]
-            transformed = self.transformed_images[self.current_image_index] \
-                if self.transformed_images else None
+            transformed = self.transformed_images[
+                self.current_image_index] if self.transformed_images else None
             self.display_images(original, transformed)
 
     def show_next_image(self):
@@ -273,8 +283,8 @@ class ImageAugmentationApp:
         if self.current_image_index < len(self.images) - 1:
             self.current_image_index += 1
             original = self.images[self.current_image_index]
-            transformed = self.transformed_images[self.current_image_index] \
-                if self.transformed_images else None
+            transformed = self.transformed_images[
+                self.current_image_index] if self.transformed_images else None
             self.display_images(original, transformed)
 
     def save_settings(self):
@@ -282,16 +292,19 @@ class ImageAugmentationApp:
         Save the current transformation settings to a JSON file.
         """
         if not self.params:
-            messagebox.showerror("Error", "No transformation settings to save.")
+            messagebox.showerror("Error",
+                                 "No transformation settings to save.")
             return
 
         save_path = filedialog.asksaveasfilename(defaultextension=".json",
-                                                 filetypes=[("JSON files", "*.json")])
+                                                 filetypes=[
+                                                     ("JSON files", "*.json")])
         if save_path:
             try:
                 with open(save_path, 'w') as f:
                     json.dump(self.params, f)
-                messagebox.showinfo("Save Settings", "Settings have been saved.")
+                messagebox.showinfo("Save Settings",
+                                    "Settings have been saved.")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to save settings: {e}")
 
@@ -299,13 +312,15 @@ class ImageAugmentationApp:
         """
         Load transformation settings from a JSON file.
         """
-        load_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
+        load_path = filedialog.askopenfilename(
+            filetypes=[("JSON files", "*.json")])
         if load_path:
             try:
                 with open(load_path, 'r') as f:
                     self.params = json.load(f)
                 self.apply_transformations(self.params)
-                messagebox.showinfo("Load Settings", "Settings have been loaded and applied.")
+                messagebox.showinfo("Load Settings",
+                                    "Settings have been loaded and applied.")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to load settings: {e}")
 
@@ -389,34 +404,23 @@ class ParamDialog:
         self.crop_width_entry.pack()
         self.crop_width_entry.insert(0, "100")
 
-        self.crop_height_label = Label(
-            top,
-            text="Crop height (e.g., 100):"
-        )
+        self.crop_height_label = Label(top, text="Crop height (e.g., 100):")
         self.crop_height_label.pack()
         self.crop_height_entry = Entry(top)
         self.crop_height_entry.pack()
         self.crop_height_entry.insert(0, "100")
 
-        self.text_label = Label(
-            top,
-            text="Overlay text:"
-        )
+        self.text_label = Label(top, text="Overlay text:")
         self.text_label.pack()
         self.text_entry = Entry(top)
         self.text_entry.pack()
 
-        self.overlay_path_button = Button(
-            top,
-            text="Select overlay image",
-            command=self.load_overlay_image
-        )
+        self.overlay_path_button = Button(top, text="Select overlay image",
+                                          command=self.load_overlay_image)
         self.overlay_path_button.pack()
 
-        self.transparency_label = Label(
-            top,
-            text="Overlay transparency (0.0 to 1.0):"
-        )
+        self.transparency_label = Label(top,
+                                        text="Overlay transparency (0.0 to 1.0):")
         self.transparency_label.pack()
         self.transparency_entry = Entry(top)
         self.transparency_entry.pack()
@@ -435,8 +439,7 @@ class ParamDialog:
 
     def ok(self):
         """
-        Collect parameters from the input fields and store them in the params
-        dictionary.
+        Collect parameters from the input fields and store them in the params dictionary.
         """
         if self.degree_entry.get() != "0":
             self.params['degrees'] = float(self.degree_entry.get())
@@ -444,7 +447,7 @@ class ParamDialog:
             self.params['mode'] = self.mode_entry.get()
         if self.width_entry.get() != "256" or self.height_entry.get() != "256":
             self.params['size'] = (
-                int(self.width_entry.get()), int(self.height_entry.get()))
+            int(self.width_entry.get()), int(self.height_entry.get()))
         if self.brightness_entry.get() != "1.0":
             self.params['factor_brightness'] = float(
                 self.brightness_entry.get())
@@ -454,9 +457,9 @@ class ParamDialog:
             self.params['amount'] = float(self.noise_entry.get())
         if self.shift_x_entry.get() != "0" or self.shift_y_entry.get() != "0":
             self.params['shift'] = (
-                int(self.shift_x_entry.get()), int(self.shift_y_entry.get()))
-        if (self.crop_width_entry.get() != "100" or
-                self.crop_height_entry.get() != "100"):
+            int(self.shift_x_entry.get()), int(self.shift_y_entry.get()))
+        if (
+                self.crop_width_entry.get() != "100" or self.crop_height_entry.get() != "100"):
             self.params['crop_size'] = (int(self.crop_width_entry.get()),
                                         int(self.crop_height_entry.get()))
         if self.text_entry.get():
