@@ -10,12 +10,13 @@ services:
     build:
       context: ../../
       dockerfile: contrib/docker/image_tool/Dockerfile
-    command: sh -c "rm -f /tmp/.X99-lock && Xvfb :99 -screen 0 1024x768x24 & sleep 1 && DISPLAY=:99 python src/main.py"
-#    command: sh -c "Xvfb :99 -screen 0 1024x768x24 & sleep 1 && DISPLAY=:99 python src/main.py"
+    command: python src/main.py
     environment:
       - "DOCKER_ENV=true"
+      - DISPLAY=${DISPLAY}
     volumes:
       - ../../:/app/TestTask
+      - /tmp/.X11-unix:/tmp/.X11-unix
 
 networks:
   elk:
