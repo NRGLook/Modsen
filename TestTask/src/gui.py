@@ -1,6 +1,9 @@
 import tkinter as tk
-import matplotlib.pyplot as plt
+
 import json
+
+import matplotlib.pyplot as plt
+
 
 from concurrent.futures import ThreadPoolExecutor
 
@@ -9,19 +12,19 @@ from tkinter import (
     Toplevel, Label, Entry, Button, Listbox
 )
 
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
 from PIL import Image
 
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 from TestTask.src.augmentation.loader import load_images_from_directory
-from TestTask.src.augmentation.transformer import (
-    overlay_image, overlay_text,
-    add_noise, change_brightness,
-    flip_image, change_contrast,
-    shift_image, random_crop,
-    rotate_image, resize_image
-)
 from TestTask.src.augmentation.saver import save_image
+from TestTask.src.augmentation.transformer import (
+    add_noise, change_brightness,
+    change_contrast, flip_image,
+    overlay_image, overlay_text,
+    random_crop, resize_image,
+    rotate_image, shift_image
+)
 
 
 class ImageAugmentationApp:
@@ -42,32 +45,50 @@ class ImageAugmentationApp:
         master.title("Image Augmentation Tool")
 
         # Create button for loading images
-        self.load_button = tk.Button(master, text="Load Images",
-                                     command=self.load_images)
+        self.load_button = tk.Button(
+            master,
+            text="Load Images",
+            command=self.load_images
+        )
         self.load_button.pack(pady=10)
 
         # Create button for applying transformations
-        self.transform_button = tk.Button(master, text="Apply Transformations",
-                                          command=self.show_transform_menu)
+        self.transform_button = tk.Button(
+            master,
+            text="Apply Transformations",
+            command=self.show_transform_menu
+        )
         self.transform_button.pack(pady=10)
 
         # Create button for applying transformations to a single image
-        self.single_transform_button = tk.Button(master, text="Apply Transformation to Single Image",
-                                                 command=self.show_single_transform_menu)
+        self.single_transform_button = tk.Button(
+            master,
+            text="Apply Transformation to Single Image",
+            command=self.show_single_transform_menu
+        )
         self.single_transform_button.pack(pady=10)
 
         # Create menu for selecting transformations
-        self.transform_menu = Menu(master, tearoff=0)
+        self.transform_menu = Menu(
+            master,
+            tearoff=0
+        )
         self.add_transformation_menu_options()
 
         # Create button for saving images
-        self.save_button = tk.Button(master, text="Save Images",
-                                     command=self.save_images)
+        self.save_button = tk.Button(
+            master,
+            text="Save Images",
+            command=self.save_images
+        )
         self.save_button.pack(pady=10)
 
         # Create button for saving settings
-        self.save_settings_button = tk.Button(master, text="Save Settings",
-                                              command=self.save_settings)
+        self.save_settings_button = tk.Button(
+            master,
+            text="Save Settings",
+            command=self.save_settings
+        )
         self.save_settings_button.pack(pady=10)
 
         # Create button for loading settings
@@ -107,7 +128,8 @@ class ImageAugmentationApp:
 
     def show_single_transform_menu(self):
         """
-        Display the parameter dialog for entering transformation parameters for a single image.
+        Display the parameter dialog for entering transformation parameters
+        for a single image.
         """
         if not self.images:
             messagebox.showerror("Error", "No images loaded.")
@@ -176,30 +198,55 @@ class ImageAugmentationApp:
         def apply_transform(img, params):
             transformed_img = img
             if 'degrees' in params:
-                transformed_img = rotate_image(transformed_img, degrees=params['degrees'])
+                transformed_img = rotate_image(transformed_img,
+                                               degrees=params['degrees'])
             if 'mode' in params:
-                transformed_img = flip_image(transformed_img, mode=params['mode'])
+                transformed_img = flip_image(transformed_img,
+                                             mode=params['mode'])
             if 'size' in params:
-                transformed_img = resize_image(transformed_img, size=params['size'])
+                transformed_img = resize_image(transformed_img,
+                                               size=params['size'])
             if 'factor_brightness' in params:
-                transformed_img = change_brightness(transformed_img, factor=params['factor_brightness'])
+                transformed_img = change_brightness(
+                    transformed_img,
+                    factor=params['factor_brightness']
+                )
             if 'factor_contrast' in params:
-                transformed_img = change_contrast(transformed_img, factor=params['factor_contrast'])
+                transformed_img = change_contrast(
+                    transformed_img,
+                    factor=params['factor_contrast']
+                )
             if 'amount' in params:
-                transformed_img = add_noise(transformed_img, amount=params['amount'])
+                transformed_img = add_noise(
+                    transformed_img,
+                    amount=params['amount']
+                )
             if 'shift' in params:
-                transformed_img = shift_image(transformed_img, shift=params['shift'])
+                transformed_img = shift_image(
+                    transformed_img,
+                    shift=params['shift']
+                )
             if 'crop_size' in params:
-                transformed_img = random_crop(transformed_img, size=params['crop_size'])
+                transformed_img = random_crop(
+                    transformed_img,
+                    size=params['crop_size']
+                )
             if 'text' in params:
-                transformed_img = overlay_text(transformed_img, text=params['text'])
+                transformed_img = overlay_text(
+                    transformed_img,
+                    text=params['text']
+                )
             if 'overlay_img' in params:
-                transformed_img = overlay_image(transformed_img, overlay=params['overlay_img'],
-                                                transparency=params.get('transparency', 0.5))
+                transformed_img = overlay_image(
+                    transformed_img,
+                    overlay=params['overlay_img'],
+                    transparency=params.get('transparency', 0.5)
+                )
             return transformed_img
 
         with ThreadPoolExecutor() as executor:
-            futures = [executor.submit(apply_transform, img, params) for img in self.images]
+            futures = [executor.submit(apply_transform, img, params)
+                       for img in self.images]
             self.transformed_images = [future.result() for future in futures]
 
         if self.transformed_images:
@@ -227,26 +274,49 @@ class ImageAugmentationApp:
 
         transformed_img = self.images[index]
         if 'degrees' in params:
-            transformed_img = rotate_image(transformed_img, degrees=params['degrees'])
+            transformed_img = rotate_image(transformed_img,
+                                           degrees=params['degrees'])
         if 'mode' in params:
             transformed_img = flip_image(transformed_img, mode=params['mode'])
         if 'size' in params:
-            transformed_img = resize_image(transformed_img, size=params['size'])
+            transformed_img = resize_image(transformed_img,
+                                           size=params['size'])
         if 'factor_brightness' in params:
-            transformed_img = change_brightness(transformed_img, factor=params['factor_brightness'])
+            transformed_img = change_brightness(
+                transformed_img,
+                factor=params['factor_brightness']
+            )
         if 'factor_contrast' in params:
-            transformed_img = change_contrast(transformed_img, factor=params['factor_contrast'])
+            transformed_img = change_contrast(
+                transformed_img,
+                factor=params['factor_contrast']
+            )
         if 'amount' in params:
-            transformed_img = add_noise(transformed_img, amount=params['amount'])
+            transformed_img = add_noise(
+                transformed_img,
+                amount=params['amount']
+            )
         if 'shift' in params:
-            transformed_img = shift_image(transformed_img, shift=params['shift'])
+            transformed_img = shift_image(
+                transformed_img,
+                shift=params['shift']
+            )
         if 'crop_size' in params:
-            transformed_img = random_crop(transformed_img, size=params['crop_size'])
+            transformed_img = random_crop(
+                transformed_img,
+                size=params['crop_size']
+            )
         if 'text' in params:
-            transformed_img = overlay_text(transformed_img, text=params['text'])
+            transformed_img = overlay_text(
+                transformed_img,
+                text=params['text']
+            )
         if 'overlay_img' in params:
-            transformed_img = overlay_image(transformed_img, overlay=params['overlay_img'],
-                                            transparency=params.get('transparency', 0.5))
+            transformed_img = overlay_image(
+                transformed_img,
+                overlay=params['overlay_img'],
+                transparency=params.get('transparency', 0.5)
+            )
 
         self.transformed_images[index] = transformed_img
 
@@ -258,7 +328,8 @@ class ImageAugmentationApp:
 
         messagebox.showinfo(
             "Transformation",
-            f"Applied transformation to image {index + 1} successfully."
+            f"Applied transformation to image {index + 1} "
+            f"successfully."
         )
 
     def save_images(self):
@@ -343,32 +414,51 @@ class ImageAugmentationApp:
         Save the current transformation settings to a JSON file.
         """
         if not self.params:
-            messagebox.showerror("Error", "No transformation settings to save.")
+            messagebox.showerror(
+                "Error",
+                "No transformation settings to save."
+            )
             return
 
-        save_path = filedialog.asksaveasfilename(defaultextension=".json",
-                                                 filetypes=[("JSON files", "*.json")])
+        save_path = filedialog.asksaveasfilename(
+            defaultextension=".json",
+            filetypes=[("JSON files", "*.json")]
+        )
         if save_path:
             try:
                 with open(save_path, 'w') as f:
                     json.dump(self.params, f)
-                messagebox.showinfo("Save Settings", "Settings have been saved.")
+                messagebox.showinfo(
+                    "Save Settings",
+                    "Settings have been saved."
+                )
             except Exception as e:
-                messagebox.showerror("Error", f"Failed to save settings: {e}")
+                messagebox.showerror(
+                    "Error",
+                    f"Failed to save settings: {e}"
+                )
 
     def load_settings(self):
         """
         Load transformation settings from a JSON file.
         """
-        load_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
+        load_path = filedialog.askopenfilename(
+            filetypes=[("JSON files", "*.json")]
+        )
         if load_path:
             try:
                 with open(load_path, 'r') as f:
                     self.params = json.load(f)
                 self.apply_transformations(self.params)
-                messagebox.showinfo("Load Settings", "Settings have been loaded and applied.")
+                messagebox.showinfo(
+                    "Load Settings",
+                    "Settings have been loaded and applied."
+                )
             except Exception as e:
-                messagebox.showerror("Error", f"Failed to load settings: {e}")
+                messagebox.showerror(
+                    "Error",
+                    f"Failed to load settings: {e}"
+                )
 
 
 class ParamDialog:
