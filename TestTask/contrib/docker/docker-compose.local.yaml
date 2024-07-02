@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  flake8:
+    build:
+      context: ../../
+      dockerfile: contrib/docker/flake8/Dockerfile
+
+  image_tool:
+    build:
+      context: ../../
+      dockerfile: contrib/docker/image_tool/Dockerfile
+    command: sh -c "rm -f /tmp/.X99-lock && Xvfb :99 -screen 0 1024x768x24 & sleep 1 && DISPLAY=:99 python src/main.py"
+#    command: sh -c "Xvfb :99 -screen 0 1024x768x24 & sleep 1 && DISPLAY=:99 python src/main.py"
+    environment:
+      - "DOCKER_ENV=true"
+    volumes:
+      - ../../:/app/TestTask
+
+networks:
+  elk:
+    driver: bridge

@@ -117,11 +117,8 @@ Support for additional image transformations:
 
 ## To-Do
 
-- [ ] Implement multithreading for processing a large number of images.
-- [ ] Implement saving of transformation settings for reuse.
 - [ ] Add advanced functionality for image augmentation from libraries such as albumentations, imgaug, and augmentor. Compare the performance of these libraries with each other.
 - [ ] Create artificial images using generative AI.
-- [ ] Support parallel processing to speed up the process.
 
 
 ## License
