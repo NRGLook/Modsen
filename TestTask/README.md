@@ -67,6 +67,7 @@ Support for additional image transformations:
   - Overlay images
 - Save transformed images to a specified directory
 - Functional tests
+- Compare:![img.png](img.png)
 
 ## Project Structure
 
@@ -117,10 +118,10 @@ Support for additional image transformations:
 
 ## To-Do
 
-- [ ] Add advanced functionality for image augmentation from libraries such as albumentations, imgaug, and augmentor. Compare the performance of these libraries with each other.
+- [ ] Add advanced functionality for image augmentation from libraries such as albumentations, imgaug, and augmentor.
 - [ ] Create artificial images using generative AI.
 
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed by Ilya Tsikhanionak
