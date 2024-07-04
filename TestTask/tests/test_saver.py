@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 from PIL import Image
 
-from TestTask.src.augmentation.saver import save_image, save_images
+from TestTask.src.augmentation.image_saver import save_image, save_images
 
 
 class TestSaver(unittest.TestCase):

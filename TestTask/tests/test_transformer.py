@@ -1,6 +1,6 @@
 import unittest
 
-from TestTask.src.augmentation.transformer import *
+from TestTask.src.augmentation.image_transformer import *
 
 
 class TestTransformer(unittest.TestCase):

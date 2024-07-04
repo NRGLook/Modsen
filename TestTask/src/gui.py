@@ -16,9 +16,9 @@ from PIL import Image
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-from TestTask.src.augmentation.loader import load_images_from_directory
-from TestTask.src.augmentation.saver import save_image
-from TestTask.src.augmentation.transformer import (
+from TestTask.src.augmentation.image_loader import load_images_from_directory
+from TestTask.src.augmentation.image_saver import save_image
+from TestTask.src.augmentation.image_transformer import (
     add_noise, change_brightness,
     change_contrast, flip_image,
     overlay_image, overlay_text,

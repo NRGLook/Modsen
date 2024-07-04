@@ -3,7 +3,7 @@ import os
 
 from PIL import Image, UnidentifiedImageError
 
-from TestTask.src.augmentation.loader import load_images_from_directory
+from TestTask.src.augmentation.image_loader import load_images_from_directory
 
 
 class TestLoader(unittest.TestCase):
